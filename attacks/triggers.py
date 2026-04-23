@@ -1,18 +1,26 @@
 import torch
+import sys
+import os
 
-def T_p(x, q=1.5):
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import Config
+
+def T_p(x, q=None):
     """Power transformation trigger (Equation 3)
     Normalizes to [0, 1], applies power q, and denormalizes.
     """
+    if q is None:
+        q = Config.POWER_Q  # Use config value if not specified
+
     x_min = x.min()
     x_max = x.max()
-    
+
     if x_max == x_min:
         return x
-        
+
     x_norm = (x - x_min) / (x_max - x_min)
     x_transformed = x_norm ** q
-    
+
     return x_transformed * (x_max - x_min) + x_min
 
 def T_s(x, beta=0.03):
